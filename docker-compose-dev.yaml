@@ -1,0 +1,73 @@
+services:
+  mysql:
+    build: ./db
+    container_name: meshrouter-mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=meshtastic
+      - MYSQL_DATABASE=meshrouter
+      - MYSQL_USER=meshrouter
+      - MYSQL_PASSWORD=meshtastic
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./db/mysql:/docker-entrypoint-initdb.d:ro
+    networks:
+      - monitoring
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
+      timeout: 20s
+      retries: 10
+      interval: 30s
+
+  meshrouter:
+    build: .
+    container_name: meshrouter-app
+    ports:
+      - "3303:3303/udp"
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - monitoring
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  grafana:
+    build: ./grafana
+    container_name: meshrouter-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=meshtastic
+      - GF_SECURITY_ADMIN_PASSWORD=meshtastic
+      - GF_INSTALL_PLUGINS=grafana-clock-panel
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/dashboards/meshtastic.json
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - monitoring
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  mysql-data:
+
+networks:
+  monitoring:
+    driver: bridge
