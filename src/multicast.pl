@@ -19,13 +19,15 @@ use MIME::Base64;
 use Google::ProtocolBuffers::Dynamic;
 use DBI;
 
+$| = 1; # Отключаем буферизацию
+
 our %portnums;
 binmode STDOUT, ':encoding(UTF-8)';
 #require './constants.pl';
 my $bcast = 0xffffffff;
 use constant DESTINATION => '224.0.0.69:4403';
 
-my $dbh = DBI->connect("dbi:mysql:dbname=meshrouter:192.168.188.16", "meshrouter","meshtastic",{ RaiseError => 1})
+my $dbh = DBI->connect("dbi:MariaDB:dbname=meshrouter;host=mysql;port=3306", "meshrouter","meshtastic",{ RaiseError => 1})
   or die $DBI::errstr;
 
 my $dynamic = Google::ProtocolBuffers::Dynamic->new($protobufPath);
@@ -44,11 +46,11 @@ my @recent;
 my ($datagram,$flags);
 while (1) {
   $s->recv($datagram,512,$flags);
-#print "Received datagram from ", $s->peerhost, ", flags ", $flags || "none", ":" . "\n";
-  next unless ($s->peerhost eq $recvr);
+print "Received datagram from ", $s->peerhost, ", flags ", $flags || "none", ":" . "\n";
+  #next unless ($s->peerhost eq $recvr);
 
-#print unpack("H*", $datagram);
-#print "\n";
+print unpack("H*", $datagram);
+print "\n";
   my $packet;
   eval{$packet = Meshtastic::MeshPacket->decode($datagram);};
   my $src = $packet->get_from;
@@ -106,7 +108,7 @@ while (1) {
    my $pSize = length $datagram;
    my $ts = time;
    $dbh->do("insert into meshrouter.packets (dbtime, id, src, dst, chHash, hopLimit, hopStart, nextHop, relayNode,
-	rssi, snr, portNum, isTX, pSize, isMQTT) values (from_unixtime($ts), $id, $src, $dst, $chHash, $hopLimit, $hopStart,
+	rssi, snr, transport, isTX, pSize, isMQTT) values (from_unixtime($ts), $id, $src, $dst, $chHash, $hopLimit, $hopStart,
 	$nextHop, $relayNode, $rssi, $snr, $portNum, $isTX, $pSize, $isMQTT);");
    if (not $isMQTT){
    if (not $old){
@@ -243,10 +245,10 @@ sub position{
      ON DUPLICATE KEY UPDATE longitude = ?, latitude = ?, altitude = ?, lastHeard = from_unixtime(?);");
     $sth->execute($src, $lon, $lat, $alt, $ts, $lon, $lat, $alt, $ts);
 
-    my ($f) = $dbh->selectrow_array("SELECT isFixedPos FROM meshrouter.info WHERE id = $src;");
-    unless ($f){
-      $dbh->do("UPDATE meshrouter.info SET disp_lat = $d_lat, disp_lon = $d_lon WHERE id = $src ;");
-    }
+#    my ($f) = $dbh->selectrow_array("SELECT isFixedPos FROM meshrouter.info WHERE id = $src;");
+#    unless ($f){
+#      $dbh->do("UPDATE meshrouter.info SET disp_lat = $d_lat, disp_lon = $d_lon WHERE id = $src ;");
+#    }
   }
 }
 
