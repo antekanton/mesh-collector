@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: meshrouter-mysql:latest
+    image: ghcr.io/antekanton/mesh-collector-db:latest
     container_name: meshrouter-mysql
     restart: unless-stopped
     environment:
@@ -27,7 +27,7 @@ services:
       interval: 30s
 
   meshrouter:
-    image: meshrouter:latest
+    image: ghcr.io/antekanton/mesh-collector-app:latest
     container_name: meshrouter-app
     ports:
       - "3303:3303/udp"
@@ -44,7 +44,7 @@ services:
         max-file: "3"
 
   grafana:
-    image: meshrouter-grafana:latest
+    image: ghcr.io/antekanton/mesh-collector-grafana:latest
     container_name: meshrouter-grafana
     ports:
       - "3000:3000"
