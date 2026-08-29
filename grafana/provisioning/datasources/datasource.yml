@@ -9,8 +9,8 @@ datasources:
     type: mysql
     access: proxy
     url: mysql:3306
-    database: meshrouter
-    user: meshrouter
+    database: meshcollector
+    user: meshcollector
     secureJsonData:
       password: meshtastic
     jsonData:
@@ -21,7 +21,7 @@ datasources:
       sslMode: disable
       tlsSkipVerify: true
       timezone: UTC
-      database: meshrouter
+      database: meshcollector
       uid: mysql_datasource
     isDefault: true
     version: 1

@@ -1,4 +1,4 @@
--- meshrouter.chat definition
+-- meshcollector.chat definition
 
 CREATE TABLE `chat` (
   `dbtime` timestamp NULL DEFAULT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE `chat` (
   `message` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- meshrouter.info definition
+-- meshcollector.info definition
 
 CREATE TABLE `info` (
   `id` bigint DEFAULT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE `info` (
   KEY `idx_coords` (`longitude`,`latitude`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- meshrouter.neighbours definition
+-- meshcollector.neighbours definition
 
 CREATE TABLE `neighbours` (
   `dbtime` timestamp NULL DEFAULT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE `neighbours` (
   `snr` float(7,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- meshrouter.packets definition
+-- meshcollector.packets definition
 
 CREATE TABLE `packets` (
   `dbtime` timestamp NULL DEFAULT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE `packets` (
   `isMQTT` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- meshrouter.traces definition
+-- meshcollector.traces definition
 
 CREATE TABLE `traces` (
   `id` bigint NOT NULL,
@@ -66,22 +66,22 @@ CREATE TABLE `traces` (
   `is_reverse` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-GRANT ALTER ON meshrouter.* TO 'meshrouter'@'%';
-GRANT CREATE ON meshrouter.* TO 'meshrouter'@'%';
-GRANT CREATE VIEW ON meshrouter.* TO 'meshrouter'@'%';
-GRANT DELETE ON meshrouter.* TO 'meshrouter'@'%';
-GRANT DROP ON meshrouter.* TO 'meshrouter'@'%';
-GRANT GRANT OPTION ON meshrouter.* TO 'meshrouter'@'%';
-GRANT INDEX ON meshrouter.* TO 'meshrouter'@'%';
-GRANT INSERT ON meshrouter.* TO 'meshrouter'@'%';
-GRANT REFERENCES ON meshrouter.* TO 'meshrouter'@'%';
-GRANT SELECT ON meshrouter.* TO 'meshrouter'@'%';
-GRANT SHOW VIEW ON meshrouter.* TO 'meshrouter'@'%';
-GRANT TRIGGER ON meshrouter.* TO 'meshrouter'@'%';
-GRANT UPDATE ON meshrouter.* TO 'meshrouter'@'%';
-GRANT ALTER ROUTINE ON meshrouter.* TO 'meshrouter'@'%';
-GRANT CREATE ROUTINE ON meshrouter.* TO 'meshrouter'@'%';
-GRANT CREATE TEMPORARY TABLES ON meshrouter.* TO 'meshrouter'@'%';
-GRANT EXECUTE ON meshrouter.* TO 'meshrouter'@'%';
-GRANT LOCK TABLES ON meshrouter.* TO 'meshrouter'@'%';
-GRANT GRANT OPTION ON meshrouter.* TO 'meshrouter'@'%';
+GRANT ALTER ON meshcollector.* TO 'meshcollector'@'%';
+GRANT CREATE ON meshcollector.* TO 'meshcollector'@'%';
+GRANT CREATE VIEW ON meshcollector.* TO 'meshcollector'@'%';
+GRANT DELETE ON meshcollector.* TO 'meshcollector'@'%';
+GRANT DROP ON meshcollector.* TO 'meshcollector'@'%';
+GRANT GRANT OPTION ON meshcollector.* TO 'meshcollector'@'%';
+GRANT INDEX ON meshcollector.* TO 'meshcollector'@'%';
+GRANT INSERT ON meshcollector.* TO 'meshcollector'@'%';
+GRANT REFERENCES ON meshcollector.* TO 'meshcollector'@'%';
+GRANT SELECT ON meshcollector.* TO 'meshcollector'@'%';
+GRANT SHOW VIEW ON meshcollector.* TO 'meshcollector'@'%';
+GRANT TRIGGER ON meshcollector.* TO 'meshcollector'@'%';
+GRANT UPDATE ON meshcollector.* TO 'meshcollector'@'%';
+GRANT ALTER ROUTINE ON meshcollector.* TO 'meshcollector'@'%';
+GRANT CREATE ROUTINE ON meshcollector.* TO 'meshcollector'@'%';
+GRANT CREATE TEMPORARY TABLES ON meshcollector.* TO 'meshcollector'@'%';
+GRANT EXECUTE ON meshcollector.* TO 'meshcollector'@'%';
+GRANT LOCK TABLES ON meshcollector.* TO 'meshcollector'@'%';
+GRANT GRANT OPTION ON meshcollector.* TO 'meshcollector'@'%';
