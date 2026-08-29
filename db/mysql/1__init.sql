@@ -66,6 +66,14 @@ CREATE TABLE `traces` (
   `is_reverse` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- meshcollector.names definition
+
+CREATE TABLE `names` (
+  `id` bigint DEFAULT NULL,
+  `lname` text,
+  `sname` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 GRANT ALTER ON meshcollector.* TO 'meshcollector'@'%';
 GRANT CREATE ON meshcollector.* TO 'meshcollector'@'%';
 GRANT CREATE VIEW ON meshcollector.* TO 'meshcollector'@'%';

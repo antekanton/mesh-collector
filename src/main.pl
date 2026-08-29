@@ -17,7 +17,6 @@ my $interface = $ENV{INTERFACE} // 'eth0';
 my $recvr = $ENV{RECEIVER_IP} // '192.168.188.114';
 my $key16 = $ENV{AES_KEY_16} // '1PG7OiApB1nwvP+rz05pAQ==';
 my $protobufPath = $ENV{PROTOBUF_PATH} // 'protobufs';
-my $multicast_group = $ENV{MULTICAST_GROUP} // '224.0.0.69:4403';
 my $db_host = $ENV{DB_HOST} // 'mysql';
 my $db_port = $ENV{DB_PORT} // 3306;
 my $db_name = $ENV{DB_NAME} // 'meshcollector';
@@ -39,8 +38,6 @@ $| = 1; # Отключаем буферизацию
 our %portnums;
 binmode STDOUT, ':encoding(UTF-8)';
 
-use constant DESTINATION => $multicast_group; # теперь динамическая константа
-
 my $dbh = DBI->connect(
     "dbi:MariaDB:dbname=$db_name;host=$db_host;port=$db_port",
     $db_user,
@@ -59,6 +56,7 @@ my $s = IO::Socket::INET->new(
     LocalAddr => '0.0.0.0'
 ) or die "ERROR creating socket : $!\n";
 
+use constant DESTINATION => '224.0.0.69:4403';
 my $m = IO::Socket::Multicast->new(
     Proto => 'udp',
     PeerAddr => DESTINATION

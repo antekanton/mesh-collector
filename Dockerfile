@@ -41,6 +41,7 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libmariadb-dev \
     libprotobuf-dev \
+    cron \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /usr/local/lib/perl5 /usr/local/lib/perl5
@@ -50,6 +51,10 @@ COPY --from=builder /app/protobufs /app/protobufs
 
 WORKDIR /app
 COPY ./src .
-RUN chmod +x multicast.pl
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x main.pl cron.pl /entrypoint.sh
 
-CMD ["perl", "./multicast.pl"]
+RUN echo "0 0 * * * cd /app && /usr/bin/perl /app/cron.pl" > /etc/cron.d/app-cron
+RUN chmod 0644 /etc/cron.d/app-cron
+
+CMD ["/entrypoint.sh"]
