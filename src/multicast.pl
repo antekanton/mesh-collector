@@ -2,15 +2,30 @@
 use strict;
 use warnings;
 use utf8;
-use constant MQTT => 1;
-my $prt = 3303;
-my $interface = 'eth0';
-my $recvr = '192.168.188.114';
-my $key16 = '1PG7OiApB1nwvP+rz05pAQ==';
-#my $key32 = 'Nmh7EooP2Tsc+7pvPwXLcEDDuYhk+fBo2GLnbA1Y1sg=';
-my $protobufPath = 'protobufs';
-################################################
 
+# Загрузка переменных окружения
+use Env qw(
+    MQTT_ENABLED PORT INTERFACE RECEIVER_IP AES_KEY_16 PROTOBUF_PATH
+    MULTICAST_GROUP DB_HOST DB_PORT DB_NAME DB_USER DB_PASSWORD
+    BCAST_ADDRESS
+);
+
+# Установка значений по умолчанию
+my $MQTT_ENABLED = $ENV{MQTT_ENABLED} // 1;
+my $prt = $ENV{PORT} // 3303;
+my $interface = $ENV{INTERFACE} // 'eth0';
+my $recvr = $ENV{RECEIVER_IP} // '192.168.188.114';
+my $key16 = $ENV{AES_KEY_16} // '1PG7OiApB1nwvP+rz05pAQ==';
+my $protobufPath = $ENV{PROTOBUF_PATH} // 'protobufs';
+my $multicast_group = $ENV{MULTICAST_GROUP} // '224.0.0.69:4403';
+my $db_host = $ENV{DB_HOST} // 'mysql';
+my $db_port = $ENV{DB_PORT} // 3306;
+my $db_name = $ENV{DB_NAME} // 'meshcollector';
+my $db_user = $ENV{DB_USER} // 'meshcollector';
+my $db_password = $ENV{DB_PASSWORD} // 'meshtastic';
+my $bcast = $ENV{BCAST_ADDRESS} // 0xffffffff;
+
+################################################
 
 use IO::Socket::INET;
 use IO::Socket::Multicast;
@@ -23,24 +38,31 @@ $| = 1; # Отключаем буферизацию
 
 our %portnums;
 binmode STDOUT, ':encoding(UTF-8)';
-#require './constants.pl';
-my $bcast = 0xffffffff;
-use constant DESTINATION => '224.0.0.69:4403';
 
-my $dbh = DBI->connect("dbi:MariaDB:dbname=meshcollector;host=mysql;port=3306", "meshcollector","meshtastic",{ RaiseError => 1})
-  or die $DBI::errstr;
+use constant DESTINATION => $multicast_group; # теперь динамическая константа
+
+my $dbh = DBI->connect(
+    "dbi:MariaDB:dbname=$db_name;host=$db_host;port=$db_port",
+    $db_user,
+    $db_password,
+    { RaiseError => 1 }
+) or die $DBI::errstr;
 
 my $dynamic = Google::ProtocolBuffers::Dynamic->new($protobufPath);
 $dynamic->load_file('mesh.proto');
 $dynamic->map({ package => 'meshtastic', prefix => 'Meshtastic' });
 
-# Create a new UDP socket
-my $s = IO::Socket::INET->new(LocalPort=>$prt, Proto => 'udp', LocalAddr => '0.0.0.0') or die "ERROR creating socket : $!\n";
-#my $m = IO::Socket::Multicast->new(LocalPort=>$port) or die "ERROR creating socket : $!\n";
-my $m = IO::Socket::Multicast->new(Proto=>'udp',PeerAddr=>DESTINATION) or die "ERROR creating socket : $!\n";
-#$m->mcast_add($address,$interface);
-#$m->mcast_ttl(1);
-#$m->mcast_loopback(0);
+# Создаем UDP сокет
+my $s = IO::Socket::INET->new(
+    LocalPort => $prt,
+    Proto => 'udp',
+    LocalAddr => '0.0.0.0'
+) or die "ERROR creating socket : $!\n";
+
+my $m = IO::Socket::Multicast->new(
+    Proto => 'udp',
+    PeerAddr => DESTINATION
+) or die "ERROR creating socket : $!\n";
 
 my @recent;
 my ($datagram,$flags);

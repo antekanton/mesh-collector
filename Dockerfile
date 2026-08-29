@@ -25,6 +25,7 @@ RUN cpanm --notest \
     IO::Socket::Multicast \
     Crypt::OpenSSL::AES \
     MIME::Base64 \
+    Env \
     DBI \
     DBD::MariaDB \
     Google::ProtocolBuffers::Dynamic

@@ -30,6 +30,13 @@ services:
     container_name: meshcollector-app
     ports:
       - "3303:3303/udp"
+    environment:
+      - PORT=3303
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=meshcollector
+      - DB_USER=meshcollector
+      - DB_PASSWORD=meshtastic
     restart: unless-stopped
     depends_on:
       mysql:
