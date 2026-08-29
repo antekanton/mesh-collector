@@ -52,11 +52,11 @@
                       "group": "mysql",
                       "version": "v0",
                       "spec": {
-                        "dataset": "meshrouter",
+                        "dataset": "meshcollector",
                         "editorMode": "code",
                         "format": "table",
                         "rawQuery": true,
-                        "rawSql": "SELECT \n    sname,\n    lname,\n    UNIX_TIMESTAMP(dbtime) * 1000 AS \"time\", \n    rssi, \n    snr\nFROM meshrouter.neighbours i \nLEFT JOIN meshrouter.info i2 ON i2.id = i.src \nWHERE lname = '$lname' ",
+                        "rawSql": "SELECT \n    sname,\n    lname,\n    UNIX_TIMESTAMP(dbtime) * 1000 AS \"time\", \n    rssi, \n    snr\nFROM meshcollector.neighbours i \nLEFT JOIN meshcollector.info i2 ON i2.id = i.src \nWHERE lname = '$lname' ",
                         "sql": {
                           "columns": [
                             {
@@ -191,11 +191,11 @@
                       "group": "mysql",
                       "version": "v0",
                       "spec": {
-                        "dataset": "meshrouter",
+                        "dataset": "meshcollector",
                         "editorMode": "code",
                         "format": "table",
                         "rawQuery": true,
-                        "rawSql": "SELECT COUNT(DISTINCT src) FROM meshrouter.neighbours",
+                        "rawSql": "SELECT COUNT(DISTINCT src) FROM meshcollector.neighbours",
                         "sql": {
                           "columns": [
                             {
@@ -309,11 +309,11 @@
                       "group": "mysql",
                       "version": "v0",
                       "spec": {
-                        "dataset": "meshrouter",
+                        "dataset": "meshcollector",
                         "editorMode": "code",
                         "format": "table",
                         "rawQuery": true,
-                        "rawSql": "SELECT COUNT(*) FROM meshrouter.packets",
+                        "rawSql": "SELECT COUNT(*) FROM meshcollector.packets",
                         "sql": {
                           "columns": [
                             {
@@ -427,11 +427,11 @@
                       "group": "mysql",
                       "version": "v0",
                       "spec": {
-                        "dataset": "meshrouter",
+                        "dataset": "meshcollector",
                         "editorMode": "code",
                         "format": "table",
                         "rawQuery": true,
-                        "rawSql": "SELECT DISTINCT\n  i.sname as node_short_name,\n  i.lname as node_long_name\nFROM meshrouter.info i\nWHERE i.sname is NOT NULL",
+                        "rawSql": "SELECT DISTINCT\n  i.sname as node_short_name,\n  i.lname as node_long_name\nFROM meshcollector.info i\nWHERE i.sname is NOT NULL",
                         "sql": {
                           "columns": [
                             {
@@ -530,11 +530,11 @@
                       "group": "mysql",
                       "version": "v0",
                       "spec": {
-                        "dataset": "meshrouter",
+                        "dataset": "meshcollector",
                         "editorMode": "code",
                         "format": "table",
                         "rawQuery": true,
-                        "rawSql": "SELECT COUNT(DISTINCT id) FROM meshrouter.info",
+                        "rawSql": "SELECT COUNT(DISTINCT id) FROM meshcollector.info",
                         "sql": {
                           "columns": [
                             {
@@ -737,12 +737,12 @@
             "group": "mysql",
             "version": "v0",
             "spec": {
-              "dataset": "meshrouter",
+              "dataset": "meshcollector",
               "editorMode": "code",
               "format": "table",
-              "query": "SELECT DISTINCT i.lname from meshrouter.neighbours n\njoin meshrouter.info i on i.id = n.src",
+              "query": "SELECT DISTINCT i.lname from meshcollector.neighbours n\njoin meshcollector.info i on i.id = n.src",
               "rawQuery": true,
-              "rawSql": "SELECT DISTINCT i.lname from meshrouter.neighbours n\njoin meshrouter.info i on i.id = n.src",
+              "rawSql": "SELECT DISTINCT i.lname from meshcollector.neighbours n\njoin meshcollector.info i on i.id = n.src",
               "refId": "SQLVariableQueryEditor-VariableQuery",
               "sql": {
                 "columns": [
@@ -770,7 +770,7 @@
           "regex": "",
           "regexApplyTo": "value",
           "sort": "disabled",
-          "definition": "SELECT DISTINCT i.lname from meshrouter.neighbours n\njoin meshrouter.info i on i.id = n.src",
+          "definition": "SELECT DISTINCT i.lname from meshcollector.neighbours n\njoin meshcollector.info i on i.id = n.src",
           "options": [],
           "multi": false,
           "includeAll": false,

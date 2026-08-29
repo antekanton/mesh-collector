@@ -49,7 +49,7 @@ docker compose up -d
 | Service | Port | Credentials |
 |---------|------|-------------|
 | Grafana | 3000 | user: `meshtastic`<br/>pass: `meshtastic` |
-| MySQL | 3306 | user: `meshrouter`<br/>pass: `meshtastic` |
+| MySQL | 3306 | user: `meshcollector`<br/>pass: `meshtastic` |
 | Collector | 3303/UDP | - |
 
 ### Configuration
@@ -103,7 +103,7 @@ docker compose up -d
 | Сервис | Порт | Учётные данные |
 |--------|------|----------------|
 | Grafana | 3000 | пользователь: `meshtastic`<br/>пароль: `meshtastic` |
-| MySQL | 3306 | пользователь: `meshrouter`<br/>пароль: `meshtastic` |
+| MySQL | 3306 | пользователь: `meshcollector`<br/>пароль: `meshtastic` |
 | Collector | 3303/UDP | - |
 
 ### Настройка

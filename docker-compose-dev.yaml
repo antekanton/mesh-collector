@@ -1,12 +1,12 @@
 services:
   mysql:
     build: ./db
-    container_name: meshrouter-mysql
+    container_name: meshcollector-mysql
     restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD=meshtastic
-      - MYSQL_DATABASE=meshrouter
-      - MYSQL_USER=meshrouter
+      - MYSQL_DATABASE=meshcollector
+      - MYSQL_USER=meshcollector
       - MYSQL_PASSWORD=meshtastic
     ports:
       - "3306:3306"
@@ -26,9 +26,9 @@ services:
       retries: 10
       interval: 30s
 
-  meshrouter:
+  meshcollector:
     build: .
-    container_name: meshrouter-app
+    container_name: meshcollector-app
     ports:
       - "3303:3303/udp"
     restart: unless-stopped
@@ -45,7 +45,7 @@ services:
 
   grafana:
     build: ./grafana
-    container_name: meshrouter-grafana
+    container_name: meshcollector-grafana
     ports:
       - "3000:3000"
     environment:

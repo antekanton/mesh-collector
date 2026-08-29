@@ -27,7 +27,7 @@ binmode STDOUT, ':encoding(UTF-8)';
 my $bcast = 0xffffffff;
 use constant DESTINATION => '224.0.0.69:4403';
 
-my $dbh = DBI->connect("dbi:MariaDB:dbname=meshrouter;host=mysql;port=3306", "meshrouter","meshtastic",{ RaiseError => 1})
+my $dbh = DBI->connect("dbi:MariaDB:dbname=meshcollector;host=mysql;port=3306", "meshcollector","meshtastic",{ RaiseError => 1})
   or die $DBI::errstr;
 
 my $dynamic = Google::ProtocolBuffers::Dynamic->new($protobufPath);
@@ -107,7 +107,7 @@ print "\n";
 #   if (defined $portnum){print " $portnums{$portnum}";};
    my $pSize = length $datagram;
    my $ts = time;
-   $dbh->do("insert into meshrouter.packets (dbtime, id, src, dst, chHash, hopLimit, hopStart, nextHop, relayNode,
+   $dbh->do("insert into meshcollector.packets (dbtime, id, src, dst, chHash, hopLimit, hopStart, nextHop, relayNode,
 	rssi, snr, transport, isTX, pSize, isMQTT) values (from_unixtime($ts), $id, $src, $dst, $chHash, $hopLimit, $hopStart,
 	$nextHop, $relayNode, $rssi, $snr, $portNum, $isTX, $pSize, $isMQTT);");
    if (not $isMQTT){
@@ -128,8 +128,8 @@ print "\n";
      if ($portNum == 70){TraceRoute($src, $dst, $payload, $rssi, $snr, $id)};
    }
    if ($ttl==0){
-     $dbh->do("insert into meshrouter.neighbours (dbtime,src,rssi,snr) values (from_unixtime($ts),$src,$rssi,$snr);");
-     $dbh->do("UPDATE meshrouter.info SET lastHeard = from_unixtime($ts) WHERE id = $src;");
+     $dbh->do("insert into meshcollector.neighbours (dbtime,src,rssi,snr) values (from_unixtime($ts),$src,$rssi,$snr);");
+     $dbh->do("UPDATE meshcollector.info SET lastHeard = from_unixtime($ts) WHERE id = $src;");
    }
 }
 $s->close();
@@ -143,7 +143,7 @@ sub textMsg{
     my $dst = shift;
     $m->send($pkt);
   my $ts = time;
-  my $sth = $dbh->prepare("insert into meshrouter.chat (dbtime, id, src, dst, message) values (from_unixtime(?),?,?,?,?);");
+  my $sth = $dbh->prepare("insert into meshcollector.chat (dbtime, id, src, dst, message) values (from_unixtime(?),?,?,?,?);");
   $sth->execute($ts,$id,$src,$dst,$p);
 }
 
@@ -169,8 +169,8 @@ sub TraceRoute{
          $LastHost = $route->get_route($Fsz-1);
        }
        unless ($LastHost == 4294967295) { # !ffffffff broadcast
-         $dbh->do("insert into meshrouter.neighbours (dbtime,src,rssi,snr) values (from_unixtime($ts),$LastHost,$rssi,$snr);");
-	 $dbh->do("UPDATE meshrouter.info SET lastHeard = from_unixtime($ts) WHERE id = $LastHost;");
+         $dbh->do("insert into meshcollector.neighbours (dbtime,src,rssi,snr) values (from_unixtime($ts),$LastHost,$rssi,$snr);");
+	 $dbh->do("UPDATE meshcollector.info SET lastHeard = from_unixtime($ts) WHERE id = $LastHost;");
        }
     }
     my $last;
@@ -192,9 +192,9 @@ sub TraceRoute{
           }
         };
         my $snr = $route->get_snr_towards($i)/4;
-	my ($r) = $dbh->selectrow_array("SELECT dbtime FROM meshrouter.traces WHERE id = $id AND src = $last AND dst = $next;");
+	my ($r) = $dbh->selectrow_array("SELECT dbtime FROM meshcollector.traces WHERE id = $id AND src = $last AND dst = $next;");
 	unless (defined $r){
-          $dbh->do("insert into meshrouter.traces (id, dbtime, src, dst, snr)
+          $dbh->do("insert into meshcollector.traces (id, dbtime, src, dst, snr)
 	  values ($id, from_unixtime($ts),$last, $next, $snr);");
         }
         $last = $next;
@@ -205,9 +205,9 @@ sub TraceRoute{
         my $next = $route->get_route_back($i);
         my $snr = $route->get_snr_back($i)/4;
 	unless ($last == $next){
-	  my ($r) = $dbh->selectrow_array("SELECT dbtime FROM meshrouter.traces WHERE id = $id AND src = $last AND dst = $next;");
+	  my ($r) = $dbh->selectrow_array("SELECT dbtime FROM meshcollector.traces WHERE id = $id AND src = $last AND dst = $next;");
 	  unless (defined $r){
-            $dbh->do("insert into meshrouter.traces (id, dbtime, src, dst, snr, is_reverse)
+            $dbh->do("insert into meshcollector.traces (id, dbtime, src, dst, snr, is_reverse)
 	       values ($id, from_unixtime($ts),$last, $next, $snr, 1);");
     	  }
         }
@@ -241,13 +241,13 @@ sub position{
 
   my $ts = time;
   unless ($lat == 0 or $lon == 0){
-    my $sth = $dbh->prepare("INSERT INTO meshrouter.info (id, longitude, latitude, altitude, lastHeard) VALUES (?, ?, ?, ?, from_unixtime(?))
+    my $sth = $dbh->prepare("INSERT INTO meshcollector.info (id, longitude, latitude, altitude, lastHeard) VALUES (?, ?, ?, ?, from_unixtime(?))
      ON DUPLICATE KEY UPDATE longitude = ?, latitude = ?, altitude = ?, lastHeard = from_unixtime(?);");
     $sth->execute($src, $lon, $lat, $alt, $ts, $lon, $lat, $alt, $ts);
 
-#    my ($f) = $dbh->selectrow_array("SELECT isFixedPos FROM meshrouter.info WHERE id = $src;");
+#    my ($f) = $dbh->selectrow_array("SELECT isFixedPos FROM meshcollector.info WHERE id = $src;");
 #    unless ($f){
-#      $dbh->do("UPDATE meshrouter.info SET disp_lat = $d_lat, disp_lon = $d_lon WHERE id = $src ;");
+#      $dbh->do("UPDATE meshcollector.info SET disp_lat = $d_lat, disp_lon = $d_lon WHERE id = $src ;");
 #    }
   }
 }
